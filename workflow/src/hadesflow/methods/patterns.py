@@ -110,14 +110,14 @@ def get_pattern_plts(setup, tier, name=None):
             / tier
             / "{detector}"
             / "{measurement}"
-            / (par_pattern() + f"-plt_{tier}_{name}.pkl"),
+            / (par_pattern() + f"-plt_{tier}.pkl"),
         )
     else:
         return (
             Path(f"{plts_path(setup)}")
             / "{detector}"
             / "{measurement}"
-            / (par_pattern() + f"-plt_{tier}.pkl"),
+            / (par_pattern() + f"-plt_{tier}_{name}.pkl"),
         )
 
 
