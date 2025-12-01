@@ -25,6 +25,7 @@ rule build_pars_dsp_pz_geds:
     input:
         files=(
             Path(filelist_path(config))
+            / "{campaign}"
             / "all-{experiment}-{detector}-{measurement}-{run}-raw.filelist"
         ),
     params:
@@ -76,6 +77,7 @@ rule build_pars_evtsel_geds:
     input:
         files=os.path.join(
             filelist_path(config),
+            "{campaign}",
             "all-{experiment}-{detector}-{measurement}-{run}-raw.filelist",
         ),
         database=rules.build_pars_dsp_pz_geds.output.decay_const,

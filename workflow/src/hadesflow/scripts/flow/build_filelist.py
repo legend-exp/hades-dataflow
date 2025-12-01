@@ -43,24 +43,25 @@ def get_keys(
 
     item_list = []
     for name, item in key.items():
-        if name != "measurement":
-            _item = item.split("_") if "_" in item and item != "char_data" else [item]
-        else:
-            _item = [item]
-
+        print(name, item)
+        _item = [item] # no need to separate '_' 
         if name == "run":
             _item += [convert_to_daq_run(i) for i in _item]
 
         if isinstance(_item, list):
             item_list.append(_item)
 
+    print("DEBUG - item_list:", item_list)
     filekeys = []
-    for i in item_list[0]:
-        for j in item_list[1]:
-            for k in item_list[2]:
-                for i2 in item_list[3]:
-                    for j2 in item_list[4]:
-                        filekeys.append(FileKey(i, j, k, i2, j2))
+    for i in item_list[0]: # experiment
+        for j in item_list[1]: # detector
+            for k in item_list[2]: # campaign
+                for i2 in item_list[3]: # measurement
+                    for j2 in item_list[4]: # run
+                        for k2 in item_list[5]: # timestamp
+                            filekeys.append(FileKey(i, j, k, i2, j2, k2))
+
+    print("DEBUG - filekeys:", filekeys)
     return filekeys
 
 
@@ -144,8 +145,24 @@ def get_filelist(wildcards, config, search_pattern, ignore_keys_file=None):
     # remove the file selection from the keypart
     keypart = f"-{wildcards.label.split('-', 1)[1]}"
     ignore_keys = get_ignored_keys(ignore_keys_file)
+    
+    print(f"DEBUG get_filelist: wildcards = {wildcards}")
+    print(f"DEBUG get_filelist: keypart = '{keypart}'")
+    print(f"DEBUG get_filelist: search_pattern = {search_pattern}")
+    print(f"DEBUG get_filelist: tier = {wildcards.tier}")
+    print(f"DEBUG get_filelist: ignore_keys = {ignore_keys}")
 
+    print("DEBUG get_filelist: Calling get_keys...")
     filekeys = get_keys(keypart)
+    print(f"DEBUG get_filelist: get_keys returned {len(filekeys)} filekeys --> {filekeys}")
+
+    print(build_filelist(
+        config,
+        filekeys,
+        search_pattern,
+        wildcards.tier,
+        ignore_keys,
+    ))
 
     return build_filelist(
         config,
@@ -164,7 +181,7 @@ def get_filelist_full_wildcards(
     ignore_keys_file=None,
 ):
     keypart = (
-        f"-{wildcards.experiment}-{wildcards.detector}-{wildcards.measurement}-{wildcards.run}"
+        f"-{wildcards.experiment}-{wildcards.detector}-{wildcards.campaign}-{wildcards.measurement}-{wildcards.run}"
     )
 
     ignore_keys = get_ignored_keys(ignore_keys_file)

@@ -27,12 +27,22 @@ def ro(path):
 
 
 def get_search_pattern(tier):
+    
+    print("=== PATTERN DEBUG ===")
+    print("get_pattern_tier_daq(config):", get_pattern_tier_daq(config))
+    print("get_pattern_tier(config, 'raw', False):", get_pattern_tier(config, 'raw', check_in_cycle=False))
+    print("get_pattern_tier(config, 'raw', True):", get_pattern_tier(config, 'raw', check_in_cycle=True))
+    print("get_pattern_tier(config, 'daq', False):", get_pattern_tier(config, 'daq', check_in_cycle=False))
+    print("=====================")
+
     if tier in ("daq", "daq_compress"):
         return get_pattern_tier(config, "daq", check_in_cycle=False)
+
     elif get_pattern_tier(config, "raw", check_in_cycle=False) == get_pattern_tier(
         config, "raw", check_in_cycle=True
     ):
         return get_pattern_tier(config, "daq", check_in_cycle=False)
+
     else:
         return get_pattern_tier(config, "raw", check_in_cycle=False)
 
@@ -48,11 +58,15 @@ def get_th_filelist_longest_run(wildcards):
 
 
 def get_daq_file(wildcards):
+    print("=== GET DAQ FILES ===")
+    print(f"DEBUG: get_daq_file received wildcards: {wildcards}")
+    print(f"DEBUG: Type of wildcards: {type(wildcards)}")
+    
     wildcards = dict(wildcards)
     wildcards["timestamp"] = convert_to_daq_timestamp(wildcards["timestamp"])
     wildcards["run"] = convert_to_daq_run(wildcards["run"])
+    
     return smk.io.expand(get_pattern_tier_daq(config), **wildcards)[0]
-
 
 def get_par_file(wildcards, tier):
     pattern = get_pattern_pars(config, tier, check_in_cycle=False)
