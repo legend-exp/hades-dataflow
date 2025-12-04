@@ -17,9 +17,6 @@ from legenddataflowscripts.workflow import (
 )
 from hadesflow.scripts.flow.build_filelist import get_filelist
 
-# Set with `snakemake --configfile=/path/to/your/config.json`
-# configfile: "have/to/specify/path/to/your/config.json"
-
 
 envvars:
     "PRODENV",
@@ -53,6 +50,7 @@ wildcard_constraints:
     experiment=r"\w+",
     # detector=r"p\d{2}",
     # measurement=r"\w{3}",
+    campaign=r"c\d+",
     run=r"r\d{3}",
     timestamp=r"\d{8}T\d{6}Z",
 

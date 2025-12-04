@@ -13,7 +13,7 @@ rule par_hit_qc:
     input:
         files=(
             Path(filelist_path(config))
-            / "all-{experiment}-{detector}-{measurement}-{run}-dsp.filelist"
+            / "all-{experiment}-{detector}-{campaign}-{measurement}-{run}-dsp.filelist"
         ),
     params:
         config_file=lambda wildcards: get_config_files(
@@ -55,7 +55,7 @@ rule build_energy_calibration:
     input:
         files=(
             Path(filelist_path(config))
-            / "all-{experiment}-{detector}-{measurement}-{run}-dsp.filelist"
+            / "all-{experiment}-{detector}-{campaign}-{measurement}-{run}-dsp.filelist"
         ),
         ctc_dict=get_pattern_pars(config, "dsp"),
         inplots=rules.par_hit_qc.output.plot_file,
@@ -112,7 +112,7 @@ rule build_aoe_calibration:
     input:
         files=(
             Path(filelist_path(config))
-            / "all-{experiment}-{detector}-{measurement}-{run}-dsp.filelist"
+            / "all-{experiment}-{detector}-{campaign}-{measurement}-{run}-dsp.filelist"
         ),
         ecal_file=get_pattern_pars_tmp(config, "hit", "energy_cal"),
         eres_file=get_pattern_pars_tmp(
@@ -166,7 +166,7 @@ rule build_lq_calibration:
     input:
         files=(
             Path(filelist_path(config))
-            / "all-{experiment}-{detector}-{measurement}-{run}-dsp.filelist"
+            / "all-{experiment}-{detector}-{campaign}-{measurement}-{run}-dsp.filelist"
         ),
         ecal_file=get_pattern_pars_tmp(config, "hit", "aoe_cal"),
         eres_file=get_pattern_pars_tmp(

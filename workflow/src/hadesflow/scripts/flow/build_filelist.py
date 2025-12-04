@@ -2,7 +2,6 @@ import glob
 from pathlib import Path
 
 from dbetto import Props
-
 import hadesflow.methods.patterns as patt
 from hadesflow.methods import FileKey
 from hadesflow.methods.utils import convert_to_daq_run
@@ -43,11 +42,7 @@ def get_keys(
 
     item_list = []
     for name, item in key.items():
-        if name != "measurement":
-            _item = item.split("_") if "_" in item and item != "char_data" else [item]
-        else:
-            _item = [item]
-
+        _item = [item]
         if name == "run":
             _item += [convert_to_daq_run(i) for i in _item]
 
@@ -55,12 +50,14 @@ def get_keys(
             item_list.append(_item)
 
     filekeys = []
-    for i in item_list[0]:
-        for j in item_list[1]:
-            for k in item_list[2]:
-                for i2 in item_list[3]:
-                    for j2 in item_list[4]:
-                        filekeys.append(FileKey(i, j, k, i2, j2))
+    for i in item_list[0]:  # experiment
+        for j in item_list[1]:  # detector
+            for k in item_list[2]:  # campaign
+                for i2 in item_list[3]:  # measurement
+                    for j2 in item_list[4]:  # run
+                        for k2 in item_list[5]:  # timestamp
+                            filekeys.append(FileKey(i, j, k, i2, j2, k2))
+
     return filekeys
 
 
@@ -114,6 +111,7 @@ def build_filelist(
                 search_pat = _search_pat
             fn_glob_pattern = key.get_path_from_filekey(search_pat, ext="*")[0]
             files = glob.glob(fn_glob_pattern)
+
             for f in files:
                 _key = FileKey.get_filekey_from_pattern(f, search_pat)
                 if _key.name in ignore_keys:
@@ -144,7 +142,6 @@ def get_filelist(wildcards, config, search_pattern, ignore_keys_file=None):
     # remove the file selection from the keypart
     keypart = f"-{wildcards.label.split('-', 1)[1]}"
     ignore_keys = get_ignored_keys(ignore_keys_file)
-
     filekeys = get_keys(keypart)
 
     return build_filelist(
@@ -163,9 +160,7 @@ def get_filelist_full_wildcards(
     tier,
     ignore_keys_file=None,
 ):
-    keypart = (
-        f"-{wildcards.experiment}-{wildcards.detector}-{wildcards.measurement}-{wildcards.run}"
-    )
+    keypart = f"-{wildcards.experiment}-{wildcards.detector}-{wildcards.campaign}-{wildcards.measurement}-{wildcards.run}"
 
     ignore_keys = get_ignored_keys(ignore_keys_file)
 

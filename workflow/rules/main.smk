@@ -12,12 +12,12 @@ from hadesflow.methods.paths import (
 # Create "{label}-{tier}.gen", based on "{label}.keylist" via
 # "{label}-{tier}.filelist". Will implicitly trigger creation of all files
 # in "{label}-{tier}.filelist".
-# Example: "all[-{detector}[-{measurement}[-{run}[-{timestamp}]]]]-{tier}.gen":
+# Example: "all-char_data[-{detector}[-{campaign}[-{measurement}[-{run}[-{timestamp}]]]]]-{tier}.gen":
 rule autogen_output:
     """
     This is the main rule for running the data production,
     it is specified with:
-    all-(experiment)-(period)-(run)-(dataype)-(timestamp)-'tier'.gen
+    all-(experiment)-(detector)-(campaign)-(measurement)-(run)-(timestamp)-'tier'.gen
     It will run the complete run script which collects all warnings
     and errors in log files into a final summary file. Also runs the file_db
     generation on new files as well as generating the json file with channels

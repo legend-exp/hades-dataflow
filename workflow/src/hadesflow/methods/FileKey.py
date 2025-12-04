@@ -43,16 +43,18 @@ def regex_from_filepattern(filepattern):
 
 
 class FileKey(
-    namedtuple("FileKey", ["experiment", "detector", "measurement", "run", "timestamp"])
+    namedtuple(
+        "FileKey", ["experiment", "detector", "campaign", "measurement", "run", "timestamp"]
+    )
 ):
     __slots__ = ()
 
-    re_pattern = "(-(?P<experiment>[^-]+)(\\-(?P<detector>[^-]+)(\\-(?P<measurement>[^-]+)(\\-(?P<run>[^-]+)(\\-(?P<timestamp>[^-]+))?)?)?)?)?$"
+    re_pattern = "(-(?P<experiment>[^-]+)(\\-(?P<detector>[^-]+)(\\-(?P<campaign>[^-]+)(\\-(?P<measurement>[^-]+)(\\-(?P<run>[^-]+)(\\-(?P<timestamp>[^-]+))?)?)?)?)?)$"
     key_pattern = key_pattern()
 
     @property
     def name(self):
-        return f"{self.experiment}-{self.detector}-{self.measurement}-{self.run}-{self.timestamp}"
+        return f"{self.experiment}-{self.detector}-{self.campaign}-{self.measurement}-{self.run}-{self.timestamp}"
 
     @property
     def key(self):
@@ -152,8 +154,8 @@ class ProcessingFileKey(FileKey):
     _fields = (*FileKey._fields, "processing_step")
     key_pattern = processing_pattern()
 
-    def __new__(cls, experiment, detector, measurement, run, timestamp, processing_step):
-        self = super().__new__(cls, experiment, detector, measurement, run, timestamp)
+    def __new__(cls, experiment, detector, campaign, measurement, run, timestamp, processing_step):
+        self = super().__new__(cls, experiment, detector, campaign, measurement, run, timestamp)
         if "_" in processing_step:
             splits = processing_step.split("_", 2)
             self.processing_type = splits[0]

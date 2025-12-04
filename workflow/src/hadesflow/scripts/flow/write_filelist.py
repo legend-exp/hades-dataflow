@@ -9,7 +9,7 @@ if len(snakemake.input) == 0:
     print(
         f"WARNING: no files found for the given pattern: {snakemake.wildcards.label}. "
         "make sure patterns follows the format: "
-        "all-{experiment}-{detector}-{measurement}-{run}-{timestamp}-{tier}.gen"
+        "all-{experiment}-{detector}-{campaign}-{measurement}-{run}-{timestamp}-{tier}.gen"
     )
 with Path(snakemake.output[0]).open("w") as f:
     for fn in snakemake.input:
