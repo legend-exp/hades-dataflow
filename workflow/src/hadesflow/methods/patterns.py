@@ -82,7 +82,7 @@ def get_pattern_pars(setup, tier, name=None, extension="yaml", check_in_cycle=Tr
     else:
         msg = "invalid tier"
         raise Exception(msg)
-    
+
     if pars_path(setup) not in str(file_pattern) and check_in_cycle is True:
         if name is None:
             return "/tmp/" + par_pattern() + f"-par_{tier}.{extension}"
@@ -94,17 +94,31 @@ def get_pattern_pars(setup, tier, name=None, extension="yaml", check_in_cycle=Tr
 
 def get_pattern_pars_tmp(setup, tier, name=None, extension="yaml"):
     if name is None:
-        return Path(f"{tmp_par_path(setup)}")  / "{campaign}" / (par_pattern() + f"-par_{tier}.{extension}")
+        return (
+            Path(f"{tmp_par_path(setup)}")
+            / "{campaign}"
+            / (par_pattern() + f"-par_{tier}.{extension}")
+        )
     else:
-        return Path(f"{tmp_par_path(setup)}")  / "{campaign}" / (par_pattern() + f"-par_{tier}_{name}.{extension}")
+        return (
+            Path(f"{tmp_par_path(setup)}")
+            / "{campaign}"
+            / (par_pattern() + f"-par_{tier}_{name}.{extension}")
+        )
 
 
 def get_pattern_plts_tmp(setup, tier, name=None, extension="pkl"):
     if name is None:
-        return Path(f"{tmp_plts_path(setup)}")  / "{campaign}" / (par_pattern() + f"-plt_{tier}.{extension}")
+        return (
+            Path(f"{tmp_plts_path(setup)}")
+            / "{campaign}"
+            / (par_pattern() + f"-plt_{tier}.{extension}")
+        )
     else:
-        return Path(f"{tmp_plts_path(setup)}")  / "{campaign}" / (
-            par_pattern() + f"-plt_{tier}_{name}.{extension}"
+        return (
+            Path(f"{tmp_plts_path(setup)}")
+            / "{campaign}"
+            / (par_pattern() + f"-plt_{tier}_{name}.{extension}")
         )
 
 
@@ -132,7 +146,8 @@ def get_pattern_log(setup, processing_step, time):
     return (
         Path(f"{tmp_log_path(setup)}")
         / time
-        / f"{processing_step}" / "{campaign}"
+        / f"{processing_step}"
+        / "{campaign}"
         / (key_pattern() + f"-{processing_step}.log"),
     )
 
@@ -141,6 +156,7 @@ def get_pattern_log_par(setup, processing_step, time):
     return (
         Path(f"{tmp_log_path(setup)}")
         / time
-        / f"{processing_step}" / "{campaign}"
+        / f"{processing_step}"
+        / "{campaign}"
         / (par_pattern() + f"-{processing_step}.log"),
     )

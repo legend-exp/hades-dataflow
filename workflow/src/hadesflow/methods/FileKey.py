@@ -41,8 +41,11 @@ def regex_from_filepattern(filepattern):
     f.append("$")
     return "".join(f)
 
+
 class FileKey(
-    namedtuple("FileKey", ["experiment", "detector", "campaign", "measurement", "run", "timestamp"])
+    namedtuple(
+        "FileKey", ["experiment", "detector", "campaign", "measurement", "run", "timestamp"]
+    )
 ):
     __slots__ = ()
 
