@@ -55,7 +55,6 @@ def get_pattern_tier(setup, tier, check_in_cycle=True):
         msg = "invalid tier"
         raise Exception(msg)
 
-    print(f"DEBUG get_pattern_tier: {file_pattern}")
     if tier_path(setup) not in str(file_pattern) and check_in_cycle is True:
         return "/tmp/" + key_pattern() + f"tier_{tier}.lh5"
     else:
@@ -84,7 +83,6 @@ def get_pattern_pars(setup, tier, name=None, extension="yaml", check_in_cycle=Tr
         msg = "invalid tier"
         raise Exception(msg)
     
-    print(f"DEBUG get_pattern_pars: {file_pattern}")
     if pars_path(setup) not in str(file_pattern) and check_in_cycle is True:
         if name is None:
             return "/tmp/" + par_pattern() + f"-par_{tier}.{extension}"
@@ -118,7 +116,7 @@ def get_pattern_plts(setup, tier, name=None):
             / "{detector}"
             / "{campaign}"
             / "{measurement}"
-            / (par_pattern() + f"-plt_{tier}_{name}.pkl"),
+            / (par_pattern() + f"-plt_{tier}.pkl"),
         )
     else:
         return (
@@ -126,7 +124,7 @@ def get_pattern_plts(setup, tier, name=None):
             / "{detector}"
             / "{campaign}"
             / "{measurement}"
-            / (par_pattern() + f"-plt_{tier}.pkl"),
+            / (par_pattern() + f"-plt_{tier}_{name}.pkl"),
         )
 
 

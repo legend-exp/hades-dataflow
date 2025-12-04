@@ -41,7 +41,6 @@ def regex_from_filepattern(filepattern):
     f.append("$")
     return "".join(f)
 
-
 class FileKey(
     namedtuple("FileKey", ["experiment", "detector", "campaign", "measurement", "run", "timestamp"])
 ):
@@ -52,7 +51,7 @@ class FileKey(
 
     @property
     def name(self):
-        return f"{self.experiment}-{self.detector}-{self.measurement}-{self.run}-{self.timestamp}"
+        return f"{self.experiment}-{self.detector}-{self.campaign}-{self.measurement}-{self.run}-{self.timestamp}"
 
     @property
     def key(self):

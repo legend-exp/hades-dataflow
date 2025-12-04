@@ -49,7 +49,7 @@ wildcard_constraints:
     experiment=r"\w+",
     # detector=r"p\d{2}",
     # measurement=r"\w{3}",
-    campaign=r"c\d{3}",
+    campaign=r"c\d+",
     run=r"r\d{3}",
     timestamp=r"\d{8}T\d{6}Z",
 

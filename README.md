@@ -15,7 +15,7 @@ following.
 
 Data generation is based on key-lists, which are flat text files
 (extension ".keylist") containing one entry of the form
-`{detector}-{measurement}-{run}-{timestamp}` per line. Key-lists
+`{detector}-{campaign}-{measurement}-{run}-{timestamp}` per line. Key-lists
 can be auto-generated based on the available DAQ or raw tier files
 using Snakemake targets.
 
@@ -24,26 +24,27 @@ generate all files listed in `{label}-{tier}.filelist`. After the files
 are created, the empty file `{label}-{tier}.filelist` will be created to
 mark the successful data production.
 
-Snakemake targets like `all-{detector}-{measurement}-{tier}.gen` may be used
+Snakemake targets like `all-{detector}-{campaign}-{measurement}-{tier}.gen` may be used
 to automatically generate key-lists and file-lists (if not already present)
 and produce all possible output for the given data tier, based on available
 DAQ or raw files which match the target.
 
 * `all.gen`
 * `all-{detector}.gen`
-* `all-{detector}-{measurement}.gen`
-* `all-{detector}-{measurement}-{run}.gen`
-* `all-{detector}-{measurement}-{run}-{timestamp}.gen`
-* `all-{detector}-{measurement}-{run}-{timestamp}-{tier}.gen`
+* `all-{detector}-{campaign}.gen`
+* `all-{detector}-{campaign}-{measurement}.gen`
+* `all-{detector}-{campaign}-{measurement}-{run}.gen`
+* `all-{detector}-{campaign}-{measurement}-{run}-{timestamp}.gen`
+* `all-{detector}-{campaign}-{measurement}-{run}-{timestamp}-{tier}.gen`
 
 which will run the full production for all detectors, resp.
-a specific detector, or a specific detector and measurement, etc.
+a specific detector, or a specific detector and campaign, etc.
 
 For example:
 
 ```shell
-snakemake all-char_data-V06649A-bkg-dsp.gen
+snakemake all-char_data-V06649A-c1-bkg-dsp.gen
 ```
 
-will run the production of data from the detector `V06649A`, measurement `bkg`
+will run the production of data from the detector `V06649A`, campaign `c1`, measurement `bkg`
 up to the DSP tier.
