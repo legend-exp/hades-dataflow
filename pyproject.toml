@@ -168,3 +168,4 @@ messages_control.disable = [
 [project.scripts]
 build-dsp-hades                = "hadesflow.scripts.tier.dsp:build_dsp_hades"
 build-hit-hades                = "hadesflow.scripts.tier.hit:build_hit_hades"
+par-geds-hit-ecal-am           = "hadesflow.scripts.pars.hit.ecal_am:par_geds_hit_ecal_am"

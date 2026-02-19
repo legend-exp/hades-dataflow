@@ -54,8 +54,25 @@ def get_daq_file(wildcards):
     return smk.io.expand(get_pattern_tier_daq(config), **wildcards)[0]
 
 
-def get_par_file(wildcards, tier):
+def expand_wildcard_to_file(wildcards, tier):
     pattern = get_pattern_pars(config, tier, check_in_cycle=False)
+    wildcards = AttrsDict(wildcards)
+
+    files = get_filelist_full_wildcards(
+        wildcards,
+        config,
+        get_pattern_tier(config, "daq", check_in_cycle=False),
+        "raw",
+        ignore_keys_file=Path(dataflow_configs) / "ignored_cycles.yaml",
+    )
+    fk = ProcessingFileKey.get_filekey_from_pattern(Path(files[0]).name)
+    return ProcessingFileKey.get_full_path_from_filename(
+        files[0], get_pattern_tier(config, "raw", check_in_cycle=False), pattern
+    )
+
+
+def get_par_file(wildcards, tier):
+
     measurement = wildcards.measurement
     wildcards = AttrsDict(dict(wildcards))
 
@@ -72,26 +89,23 @@ def get_par_file(wildcards, tier):
     wildcards["run"] = "*"
     wildcards["timestamp"] = "*"
 
+    files = expand_wildcard_to_file(wildcards, tier)
+
+    if (
+        measurement
+        in ["am_HS1_lat_ssh", "am_HS1_top_ssh", "am_HS1_lat_dlt", "am_HS1_top_dlt"]
+        and tier == "hit"
+    ):
+        wildcards["measurement"] = "am_HS1_lat_dlt"
+        files += expand_wildcard_to_file(wildcards, tier)
+    return files
+
     # if wildcards.measurement == "bkg":
     #     measurement = "th_HS2_top_psa"
     # elif wildcards.measurement == "co_HS5_top_hvs":
     #     measurement = "co_HS5_top_dlt"
     # elif wildcards.measurement == "am_HS1_top_ssh":
     #     measurement = "am_HS1_lat_ssh"
-
-    wildcards = AttrsDict(wildcards)
-
-    files = get_filelist_full_wildcards(
-        wildcards,
-        config,
-        get_pattern_tier(config, "daq", check_in_cycle=False),
-        "raw",
-        ignore_keys_file=Path(dataflow_configs) / "ignored_cycles.yaml",
-    )
-    fk = ProcessingFileKey.get_filekey_from_pattern(Path(files[0]).name)
-    return ProcessingFileKey.get_full_path_from_filename(
-        files[0], get_pattern_tier(config, "raw", check_in_cycle=False), pattern
-    )
 
 
 def get_config_files(config_db, timestamp, measurement, channel, rule_name, field):
