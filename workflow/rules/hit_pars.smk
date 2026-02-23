@@ -50,6 +50,9 @@ rule par_hit_qc:
         "--cal-files {input.files} "
 
 
+print(get_pattern_pars_tmp(config, "hit", "energy_cal"))
+
+
 # This rule builds the energy calibration using the calibration dsp files
 rule build_energy_calibration:
     input:
@@ -83,8 +86,8 @@ rule build_energy_calibration:
             get_pattern_pars_tmp(config, "hit", "energy_cal_objects", extension="pkl")
         ),
         plot_file=temp(get_pattern_plts_tmp(config, "hit", "energy_cal")),
-    # wildcard_constraints:
-    #     measurement = "^th*"
+    wildcard_constraints:
+        measurement="th_[^-]+",
     log:
         get_pattern_log_par(config, "pars_hit_energy_cal", time),
     group:
@@ -141,6 +144,8 @@ rule build_aoe_calibration:
             get_pattern_pars_tmp(config, "hit", "aoe_cal_objects", extension="pkl")
         ),
         plot_file=temp(get_pattern_plts_tmp(config, "hit", "aoe_cal")),
+    wildcard_constraints:
+        measurement="th_[^-]+",
     log:
         get_pattern_log_par(config, "pars_hit_aoe_cal", time),
     group:
@@ -199,6 +204,8 @@ rule build_lq_calibration:
             check_in_cycle=check_in_cycle,
         ),
         plot_file=get_pattern_plts(config, "hit"),
+    wildcard_constraints:
+        measurement="th_[^-]+",
     log:
         get_pattern_log_par(config, "pars_hit_lq_cal", time),
     group:
@@ -217,3 +224,64 @@ rule build_lq_calibration:
         "--inplots {input.inplots} "
         "--eres-file {input.eres_file} "
         "{input.files}"
+
+
+# This rule builds the energy calibration using the calibration dsp files
+rule build_energy_calibration_am:
+    input:
+        files=(
+            Path(filelist_path(config))
+            / "all-{experiment}-{detector}-{campaign}-{measurement}-{run}-dsp.filelist"
+        ),
+        ctc_dict=lambda wildcards: get_par_file(wildcards, "dsp"),
+        inplots=rules.par_hit_qc.output.plot_file,
+        in_hit_dict=rules.par_hit_qc.output.qc_file,
+    params:
+        config_file=lambda wildcards: get_config_files(
+            dataflow_configs_texdb,
+            wildcards.timestamp,
+            wildcards.measurement,
+            wildcards.detector,
+            "pars_hit_ecal_am",
+            "ecal_am_config",
+        ),
+        log_config=lambda wildcards: get_log_config(
+            dataflow_configs_texdb,
+            wildcards.timestamp,
+            wildcards.measurement,
+            "pars_hit_ecal_am",
+        ),
+        dsp_table_name="dsp",
+        det_status="on",
+    output:
+        ecal_file=get_pattern_pars(config, "hit", check_in_cycle=check_in_cycle),
+        results_file=get_pattern_pars(
+            config,
+            "hit",
+            name="objects",
+            extension="dir",
+            check_in_cycle=check_in_cycle,
+        ),
+        plot_file=get_pattern_plts(config, "hit"),
+    wildcard_constraints:
+        measurement="am_[^-]+",
+    log:
+        get_pattern_log_par(config, "pars_hit_energy_cal_am", time),
+    group:
+        "par-hit"
+    resources:
+        runtime=300,
+    shell:
+        execenv_pyexe(config, "par-geds-hit-ecal-am") + "--log {log} "
+        "--log-config {params.log_config} "
+        "--config-file {params.config_file} "
+        "--det-status {params.det_status} "
+        "--table-name {params.dsp_table_name} "
+        "--plot-path {output.plot_file} "
+        "--results-path {output.results_file} "
+        "--save-path {output.ecal_file} "
+        "--inplot-dict {input.inplots} "
+        "--in-hit-dict {input.in_hit_dict} "
+        "--ctc-dict {input.ctc_dict} "
+        "-d "
+        "--files {input.files}"

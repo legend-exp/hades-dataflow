@@ -51,12 +51,12 @@ dynamic = ["version"]
 dependencies = [
     "colorlog",
     "dbetto==1.2.4",
-    "pygama==2.3.0a1",
+    "pygama==2.3.4",
     "dspeed==2.0.2",
     "pylegendmeta==1.3.1",
     "legend-pydataobj==1.16.0",
     "legend-daq2lh5==1.6.4a1",
-    "legend-dataflow-scripts==0.3.0a1",
+    "legend-dataflow-scripts==0.3.0a4",
     "pip",
 ]
 
@@ -168,3 +168,4 @@ messages_control.disable = [
 [project.scripts]
 build-dsp-hades                = "hadesflow.scripts.tier.dsp:build_dsp_hades"
 build-hit-hades                = "hadesflow.scripts.tier.hit:build_hit_hades"
+par-geds-hit-ecal-am           = "hadesflow.scripts.pars.hit.ecal_am:par_geds_hit_ecal_am"
