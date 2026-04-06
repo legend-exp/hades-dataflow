@@ -16,6 +16,14 @@ rule build_hit:
     input:
         dsp_file=get_pattern_tier(config, "dsp", check_in_cycle=False),
         pars_file=lambda wildcards: get_par_file(wildcards, "hit"),
+    output:
+        tier_file=get_pattern_tier(config, "hit", check_in_cycle=check_in_cycle),
+    log:
+        get_pattern_log(config, "tier_hit", time),
+    group:
+        "tier-hit"
+    resources:
+        runtime=300,
     params:
         config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
@@ -31,14 +39,6 @@ rule build_hit:
             wildcards.measurement,
             "tier_hit",
         ),
-    output:
-        tier_file=get_pattern_tier(config, "hit", check_in_cycle=check_in_cycle),
-    log:
-        get_pattern_log(config, "tier_hit", time),
-    group:
-        "tier-hit"
-    resources:
-        runtime=300,
     shell:
         execenv_pyexe(config, "build-hit-hades") + "--log {log} "
         "--log-config {params.log_config} "

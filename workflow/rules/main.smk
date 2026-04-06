@@ -15,14 +15,14 @@ from hadesflow.methods.paths import (
 # Example: "all-char_data[-{detector}[-{campaign}[-{measurement}[-{run}[-{timestamp}]]]]]-{tier}.gen":
 rule autogen_output:
     """
-    This is the main rule for running the data production,
-    it is specified with:
-    all-(experiment)-(detector)-(campaign)-(measurement)-(run)-(timestamp)-'tier'.gen
-    It will run the complete run script which collects all warnings
-    and errors in log files into a final summary file. Also runs the file_db
-    generation on new files as well as generating the json file with channels
-    and fields in each file.
-    """
+This is the main rule for running the data production,
+it is specified with:
+all-(experiment)-(detector)-(campaign)-(measurement)-(run)-(timestamp)-'tier'.gen
+It will run the complete run script which collects all warnings
+and errors in log files into a final summary file. Also runs the file_db
+generation on new files as well as generating the json file with channels
+and fields in each file.
+"""
     input:
         filelist=Path(filelist_path(config)) / "{label}-{tier}.filelist",
     output:
@@ -33,12 +33,12 @@ rule autogen_output:
         warning_log=f"{log_path(config)}/warning-"
         + "{label}-{tier}"
         + f"-{datetime.strftime(datetime.utcnow(), '%Y%m%dT%H%M%SZ')}.log",
+    threads: min(workflow.cores, 64)
     params:
         log_path=tmp_log_path(config),
         filedb_path=os.path.join(pars_path(config), "filedb"),
         config=lambda wildcards: config,
         basedir=basedir,
         ignore_keys_file=Path(dataflow_configs) / "ignored_cycles.yaml",
-    threads: min(workflow.cores, 64)
     script:
         "../src/hadesflow/scripts/flow/complete_run.py"
