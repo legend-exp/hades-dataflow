@@ -27,6 +27,15 @@ rule build_pars_dsp_pz_geds:
             Path(filelist_path(config))
             / "all-{experiment}-{detector}-{campaign}-{measurement}-{run}-raw.filelist"
         ),
+    output:
+        decay_const=temp(get_pattern_pars_tmp(config, "dsp", "decay_constant")),
+        plots=temp(get_pattern_plts_tmp(config, "dsp", "decay_constant")),
+    log:
+        get_pattern_log(config, "par_dsp_decay_constant", time),
+    group:
+        "par-dsp"
+    resources:
+        runtime=300,
     params:
         config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
@@ -52,15 +61,6 @@ rule build_pars_dsp_pz_geds:
         ),
         raw_table_name="raw",
         configs=config_path(config),
-    output:
-        decay_const=temp(get_pattern_pars_tmp(config, "dsp", "decay_constant")),
-        plots=temp(get_pattern_plts_tmp(config, "dsp", "decay_constant")),
-    log:
-        get_pattern_log(config, "par_dsp_decay_constant", time),
-    group:
-        "par-dsp"
-    resources:
-        runtime=300,
     shell:
         execenv_pyexe(config, "par-geds-dsp-pz") + "-p --log {log} "
         "--log-config {params.log_config} "
@@ -79,6 +79,15 @@ rule build_pars_evtsel_geds:
             "all-{experiment}-{detector}-{campaign}-{measurement}-{run}-raw.filelist",
         ),
         database=rules.build_pars_dsp_pz_geds.output.decay_const,
+    output:
+        peak_file=temp(get_pattern_pars_tmp(config, "dsp", "peaks", extension="lh5")),
+    log:
+        get_pattern_log(config, "par_dsp_event_selection", time),
+    group:
+        "par-dsp"
+    resources:
+        runtime=300,
+        mem_swap=70,
     params:
         config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
@@ -103,15 +112,6 @@ rule build_pars_evtsel_geds:
             "pars_dsp_peak_selection",
         ),
         raw_table_name="raw",
-    output:
-        peak_file=temp(get_pattern_pars_tmp(config, "dsp", "peaks", extension="lh5")),
-    log:
-        get_pattern_log(config, "par_dsp_event_selection", time),
-    group:
-        "par-dsp"
-    resources:
-        runtime=300,
-        mem_swap=70,
     shell:
         execenv_pyexe(config, "par-geds-dsp-evtsel") + "-p --log {log} "
         "--log-config {params.log_config} "
@@ -129,6 +129,16 @@ rule build_pars_dsp_eopt_geds:
         peak_file=rules.build_pars_evtsel_geds.output.peak_file,
         decay_const=rules.build_pars_dsp_pz_geds.output.decay_const,
         inplots=rules.build_pars_dsp_pz_geds.output.plots,
+    output:
+        dsp_pars=get_pattern_pars(config, "dsp"),
+        qbb_grid=get_pattern_pars(config, "dsp", "objects", extension="pkl"),
+        plots=get_pattern_plts(config, "dsp"),
+    log:
+        get_pattern_log(config, "pars_dsp_eopt", time),
+    group:
+        "par-dsp"
+    resources:
+        runtime=300,
     params:
         config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
@@ -153,16 +163,6 @@ rule build_pars_dsp_eopt_geds:
             "pars_dsp_eopt",
         ),
         raw_table_name="raw",
-    output:
-        dsp_pars=get_pattern_pars(config, "dsp"),
-        qbb_grid=get_pattern_pars(config, "dsp", "objects", extension="pkl"),
-        plots=get_pattern_plts(config, "dsp"),
-    log:
-        get_pattern_log(config, "pars_dsp_eopt", time),
-    group:
-        "par-dsp"
-    resources:
-        runtime=300,
     shell:
         execenv_pyexe(config, "par-geds-dsp-eopt") + "--log {log} "
         "--log-config {params.log_config} "

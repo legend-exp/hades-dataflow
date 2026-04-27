@@ -15,6 +15,15 @@ rule par_hit_qc:
             Path(filelist_path(config))
             / "all-{experiment}-{detector}-{campaign}-{measurement}-{run}-dsp.filelist"
         ),
+    output:
+        qc_file=temp(get_pattern_pars_tmp(config, "hit", "qc")),
+        plot_file=temp(get_pattern_plts(config, "hit", "qc")),
+    log:
+        get_pattern_log_par(config, "pars_hit_qc", time),
+    group:
+        "par-hit"
+    resources:
+        runtime=300,
     params:
         config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
@@ -31,15 +40,6 @@ rule par_hit_qc:
             "pars_hit_qc",
         ),
         dsp_table_name="dsp",
-    output:
-        qc_file=temp(get_pattern_pars_tmp(config, "hit", "qc")),
-        plot_file=temp(get_pattern_plts(config, "hit", "qc")),
-    log:
-        get_pattern_log_par(config, "pars_hit_qc", time),
-    group:
-        "par-hit"
-    resources:
-        runtime=300,
     shell:
         execenv_pyexe(config, "par-geds-hit-qc") + "--log {log} "
         "--log-config {params.log_config} "
@@ -63,6 +63,20 @@ rule build_energy_calibration:
         ctc_dict=get_pattern_pars(config, "dsp"),
         inplots=rules.par_hit_qc.output.plot_file,
         in_hit_dict=rules.par_hit_qc.output.qc_file,
+    output:
+        ecal_file=temp(get_pattern_pars_tmp(config, "hit", "energy_cal")),
+        results_file=temp(
+            get_pattern_pars_tmp(config, "hit", "energy_cal_objects", extension="pkl")
+        ),
+        plot_file=temp(get_pattern_plts_tmp(config, "hit", "energy_cal")),
+    log:
+        get_pattern_log_par(config, "pars_hit_energy_cal", time),
+    wildcard_constraints:
+        measurement="th_[^-]+",
+    group:
+        "par-hit"
+    resources:
+        runtime=300,
     params:
         config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
@@ -80,20 +94,6 @@ rule build_energy_calibration:
         ),
         dsp_table_name="dsp",
         det_status="on",
-    output:
-        ecal_file=temp(get_pattern_pars_tmp(config, "hit", "energy_cal")),
-        results_file=temp(
-            get_pattern_pars_tmp(config, "hit", "energy_cal_objects", extension="pkl")
-        ),
-        plot_file=temp(get_pattern_plts_tmp(config, "hit", "energy_cal")),
-    wildcard_constraints:
-        measurement="th_[^-]+",
-    log:
-        get_pattern_log_par(config, "pars_hit_energy_cal", time),
-    group:
-        "par-hit"
-    resources:
-        runtime=300,
     shell:
         execenv_pyexe(config, "par-geds-hit-ecal") + "--log {log} "
         "--log-config {params.log_config} "
@@ -122,6 +122,20 @@ rule build_aoe_calibration:
             config, "hit", "energy_cal_objects", extension="pkl"
         ),
         inplots=get_pattern_plts_tmp(config, "hit", "energy_cal"),
+    output:
+        hit_pars=temp(get_pattern_pars_tmp(config, "hit", "aoe_cal")),
+        aoe_results=temp(
+            get_pattern_pars_tmp(config, "hit", "aoe_cal_objects", extension="pkl")
+        ),
+        plot_file=temp(get_pattern_plts_tmp(config, "hit", "aoe_cal")),
+    log:
+        get_pattern_log_par(config, "pars_hit_aoe_cal", time),
+    wildcard_constraints:
+        measurement="th_[^-]+",
+    group:
+        "par-hit"
+    resources:
+        runtime=300,
     params:
         config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
@@ -138,20 +152,6 @@ rule build_aoe_calibration:
             "pars_hit_aoecal",
         ),
         dsp_table_name="dsp",
-    output:
-        hit_pars=temp(get_pattern_pars_tmp(config, "hit", "aoe_cal")),
-        aoe_results=temp(
-            get_pattern_pars_tmp(config, "hit", "aoe_cal_objects", extension="pkl")
-        ),
-        plot_file=temp(get_pattern_plts_tmp(config, "hit", "aoe_cal")),
-    wildcard_constraints:
-        measurement="th_[^-]+",
-    log:
-        get_pattern_log_par(config, "pars_hit_aoe_cal", time),
-    group:
-        "par-hit"
-    resources:
-        runtime=300,
     shell:
         execenv_pyexe(config, "par-geds-hit-aoe") + "--log {log} "
         "--log-config {params.log_config} "
@@ -178,6 +178,24 @@ rule build_lq_calibration:
             config, "hit", "aoe_cal_objects", extension="pkl"
         ),
         inplots=get_pattern_plts_tmp(config, "hit", "aoe_cal"),
+    output:
+        hit_pars=get_pattern_pars(config, "hit", check_in_cycle=check_in_cycle),
+        lq_results=get_pattern_pars(
+            config,
+            "hit",
+            name="objects",
+            extension="dir",
+            check_in_cycle=check_in_cycle,
+        ),
+        plot_file=get_pattern_plts(config, "hit"),
+    log:
+        get_pattern_log_par(config, "pars_hit_lq_cal", time),
+    wildcard_constraints:
+        measurement="th_[^-]+",
+    group:
+        "par-hit"
+    resources:
+        runtime=300,
     params:
         config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
@@ -194,24 +212,6 @@ rule build_lq_calibration:
             "pars_hit_lqcal",
         ),
         dsp_table_name="dsp",
-    output:
-        hit_pars=get_pattern_pars(config, "hit", check_in_cycle=check_in_cycle),
-        lq_results=get_pattern_pars(
-            config,
-            "hit",
-            name="objects",
-            extension="dir",
-            check_in_cycle=check_in_cycle,
-        ),
-        plot_file=get_pattern_plts(config, "hit"),
-    wildcard_constraints:
-        measurement="th_[^-]+",
-    log:
-        get_pattern_log_par(config, "pars_hit_lq_cal", time),
-    group:
-        "par-hit"
-    resources:
-        runtime=300,
     shell:
         execenv_pyexe(config, "par-geds-hit-lq") + "--log {log} "
         "--log-config {params.log_config} "
@@ -236,6 +236,24 @@ rule build_energy_calibration_am:
         ctc_dict=lambda wildcards: get_par_file(wildcards, "dsp"),
         inplots=rules.par_hit_qc.output.plot_file,
         in_hit_dict=rules.par_hit_qc.output.qc_file,
+    output:
+        ecal_file=get_pattern_pars(config, "hit", check_in_cycle=check_in_cycle),
+        results_file=get_pattern_pars(
+            config,
+            "hit",
+            name="objects",
+            extension="dir",
+            check_in_cycle=check_in_cycle,
+        ),
+        plot_file=get_pattern_plts(config, "hit"),
+    log:
+        get_pattern_log_par(config, "pars_hit_energy_cal_am", time),
+    wildcard_constraints:
+        measurement="am_[^-]+",
+    group:
+        "par-hit"
+    resources:
+        runtime=300,
     params:
         config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
@@ -253,24 +271,6 @@ rule build_energy_calibration_am:
         ),
         dsp_table_name="dsp",
         det_status="on",
-    output:
-        ecal_file=get_pattern_pars(config, "hit", check_in_cycle=check_in_cycle),
-        results_file=get_pattern_pars(
-            config,
-            "hit",
-            name="objects",
-            extension="dir",
-            check_in_cycle=check_in_cycle,
-        ),
-        plot_file=get_pattern_plts(config, "hit"),
-    wildcard_constraints:
-        measurement="am_[^-]+",
-    log:
-        get_pattern_log_par(config, "pars_hit_energy_cal_am", time),
-    group:
-        "par-hit"
-    resources:
-        runtime=300,
     shell:
         execenv_pyexe(config, "par-geds-hit-ecal-am") + "--log {log} "
         "--log-config {params.log_config} "

@@ -13,10 +13,16 @@ def get_json_output(output):
 
 rule build_raw:
     """
-    This rule runs build raw, it takes in a daq file and outputs a raw file
-    """
+This rule runs build raw, it takes in a daq file and outputs a raw file
+"""
     input:
         get_daq_file,
+    output:
+        protected(get_pattern_tier(config, "raw", check_in_cycle=check_in_cycle)),
+    log:
+        get_pattern_log(config, "tier_raw", time),
+    group:
+        "tier-raw"
     params:
         config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
@@ -26,12 +32,6 @@ rule build_raw:
             "tier_raw",
             "raw_config",
         ),
-    output:
-        protected(get_pattern_tier(config, "raw", check_in_cycle=check_in_cycle)),
-    log:
-        get_pattern_log(config, "tier_raw", time),
-    group:
-        "tier-raw"
     shell:
         execenv_pyexe(config, "legend-daq2lh5") + " "
         "--out-spec {params.config_file} "

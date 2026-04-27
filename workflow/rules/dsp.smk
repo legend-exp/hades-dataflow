@@ -22,6 +22,15 @@ rule build_dsp:
     input:
         raw_file=get_pattern_tier(config, "raw", check_in_cycle=False),
         pars_file=lambda wildcards: get_par_file(wildcards, "dsp"),
+    output:
+        tier_file=get_pattern_tier(config, "dsp", check_in_cycle=check_in_cycle),
+    log:
+        get_pattern_log(config, "tier_dsp", time),
+    group:
+        "tier-dsp"
+    resources:
+        runtime=300,
+        mem_swap=30,
     params:
         config_file=lambda wildcards: get_config_files(
             dataflow_configs_texdb,
@@ -37,15 +46,6 @@ rule build_dsp:
             wildcards.measurement,
             "tier_dsp",
         ),
-    output:
-        tier_file=get_pattern_tier(config, "dsp", check_in_cycle=check_in_cycle),
-    log:
-        get_pattern_log(config, "tier_dsp", time),
-    group:
-        "tier-dsp"
-    resources:
-        runtime=300,
-        mem_swap=30,
     shell:
         execenv_pyexe(config, "build-dsp-hades") + "--log {log} "
         "--log-config {params.log_config} "
