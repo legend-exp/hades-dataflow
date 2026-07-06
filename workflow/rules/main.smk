@@ -15,14 +15,14 @@ from hadesflow.methods.paths import (
 # Example: "all-char_data[-{detector}[-{campaign}[-{measurement}[-{run}[-{timestamp}]]]]]-{tier}.gen":
 rule autogen_output:
     """
-This is the main rule for running the data production,
-it is specified with:
-all-(experiment)-(detector)-(campaign)-(measurement)-(run)-(timestamp)-'tier'.gen
-It will run the complete run script which collects all warnings
-and errors in log files into a final summary file. Also runs the file_db
-generation on new files as well as generating the json file with channels
-and fields in each file.
-"""
+    This is the main rule for running the data production,
+    it is specified with:
+    all-(experiment)-(detector)-(campaign)-(measurement)-(run)-(timestamp)-'tier'.gen
+    It will run the complete run script which collects all warnings
+    and errors in log files into a final summary file. Also runs the file_db
+    generation on new files as well as generating the json file with channels
+    and fields in each file.
+    """
     input:
         filelist=Path(filelist_path(config)) / "{label}-{tier}.filelist",
     output:
