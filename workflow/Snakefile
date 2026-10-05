@@ -91,7 +91,6 @@ onsuccess:
     # shell(f"rm {filelist_path(setup)}/* || true")
 
 
-
 # Placeholder, can email or maybe put message in slack
 onerror:
     print("An error occurred :( ")
