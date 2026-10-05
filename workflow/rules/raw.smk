@@ -13,8 +13,8 @@ def get_json_output(output):
 
 rule build_raw:
     """
-This rule runs build raw, it takes in a daq file and outputs a raw file
-"""
+    This rule runs build raw, it takes in a daq file and outputs a raw file
+    """
     input:
         get_daq_file,
     output:
